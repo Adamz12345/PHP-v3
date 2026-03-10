@@ -73,7 +73,7 @@ class Service implements ServiceInterface
         case 'POST':
             $response = $this->http->request(
                 'POST', $url, [
-                'debug' => false, // TODO: turn to false  on release.
+                'debug' => false,
                 'headers' => [
                     'Authorization' => "Bearer $secret",
                     'Content-Type' => 'application/json',
@@ -85,7 +85,7 @@ class Service implements ServiceInterface
         case 'PUT':
             $response = $this->http->request(
                 'PUT', $url, [
-                'debug' => false, // TODO: turn to false  on release.
+                'debug' => false,
                 'headers' => [
                     'Authorization' => "Bearer $secret",
                     'Content-Type' => 'application/json',

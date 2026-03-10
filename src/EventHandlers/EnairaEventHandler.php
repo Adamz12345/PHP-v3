@@ -17,32 +17,32 @@ class EnairaEventHandler implements EventHandlerInterface
 
     public function onSuccessful($transactionData): void
     {
-        // TODO: Implement onSuccessful() method.
+        self::sendAnalytics('Initiate-Enaira-Success');
     }
 
     public function onFailure($transactionData): void
     {
-        // TODO: Implement onFailure() method.
+        self::sendAnalytics('Initiate-Enaira-Failed');
     }
 
     public function onRequery($transactionReference): void
     {
-        // TODO: Implement onRequery() method.
+        self::sendAnalytics('Initiate-Enaira-Requery');
     }
 
     public function onRequeryError($requeryResponse): void
     {
-        // TODO: Implement onRequeryError() method.
+        self::sendAnalytics('Initiate-Enaira-Requery-Error');
     }
 
     public function onCancel($transactionReference): void
     {
-        // TODO: Implement onCancel() method.
+        self::sendAnalytics('Initiate-Enaira-Cancelled');
     }
 
     public function onTimeout($transactionReference, $data): void
     {
-        // TODO: Implement onTimeout() method.
+        self::sendAnalytics('Initiate-Enaira-Timeout');
     }
 
     public function onAuthorization(\stdClass $response, ?array $resource = null): array

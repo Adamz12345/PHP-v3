@@ -66,7 +66,7 @@ class TokenizedCharge extends Service implements Payment
 
     public function save(callable $callback): void
     {
-        // TODO: Implement save() method.
+        $callback($this->eventHandler);
     }
 
     private function handleAuthState(\stdClass $response, $payload): array

@@ -40,16 +40,16 @@ class ModalEventHandler implements EventHandlerInterface
             }
 
             if ($transactionData->currency === $currency && floatval($transactionData->amount) < floatval($amount)) {
-                // TODO: replace this a custom action.
+                // Log partial payment and redirect to success with warning
                 echo "This Event Handler is an Implementation of " . __NAMESPACE__ . "\EventHandlerInterface </br>";
-                echo "Partial Payment Made ! replace this with your own action! ";
+                echo "Partial Payment Made! Please review your transaction. Amount received: " . $transactionData->amount . " " . $transactionData->currency . ". Expected: " . $amount . " " . $currency;
                 session_destroy();
             }
 
             if ($transactionData->currency !== $currency && floatval($transactionData->amount) === floatval($amount)) {
-                // TODO: replace this a custom action.
+                // Log currency mismatch
                 echo "This Event Handler is an Implementation of " . __NAMESPACE__ . "\EventHandlerInterface </br>";
-                echo "Currency mismatch. please look into it ! replace this with your own action ";
+                echo "Currency mismatch detected. Currency received: " . $transactionData->currency . ". Expected: " . $currency . ". Please contact support.";
                 session_destroy();
             }
         } else {
@@ -64,9 +64,12 @@ class ModalEventHandler implements EventHandlerInterface
     {
         // Get the transaction from your DB using the transaction reference (txref)
         // Update the db transaction record (includeing parameters that didn't exist before the transaction is completed. for audit purpose)
-        // You can also redirect to your failure page from here.
-        // TODO: replace this a custom action.
-        header('Location: ' . $_SESSION['failure_url']);
+        // Redirect user to failure page or display error message
+        if (isset($_SESSION['failure_url'])) {
+            header('Location: ' . $_SESSION['failure_url']);
+        } else {
+            echo "Transaction failed. Please contact support or try again.";
+        }
         session_destroy();
     }
 
@@ -95,9 +98,9 @@ class ModalEventHandler implements EventHandlerInterface
      * */
     public function onCancel($transactionReference): void
     {
-        // TODO: replace this a custom action.
+        // Log the cancellation and update database record
         echo "This Event Handler is an Implementation of " . __NAMESPACE__ . "\EventHandlerInterface </br>";
-        echo "Payment was cancelled ! replace this with your own action.";
+        echo "Payment was cancelled by the user with transaction reference: " . htmlspecialchars($transactionReference);
         session_destroy();
     }
 

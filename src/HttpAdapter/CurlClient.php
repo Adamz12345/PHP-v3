@@ -46,9 +46,31 @@ class CurlClient implements \Psr\Http\Client\ClientInterface
         return $this->createResponse($response);
     }
 
-    private function createResponse(bool $response): void
+    private function createResponse($response): \Psr\Http\Message\ResponseInterface
     {
-        //TODO: complete createResponse method for curlclient implementation
+        // Create a Response object from the curl response
+        // This is a simplified implementation that assumes successful HTTP responses
+        if ($response === false) {
+            throw new \RuntimeException('CURL error: ' . curl_error($this->ch));
+        }
+
+        // Create a standard PSR-7 Response object
+        // Note: This is a basic implementation. In production, use a proper ResponseFactory
+        $statusCode = 200;
+        $headers = [];
+        $body = $response;
+
+        // Create a response stream
+        $stream = $this->createStream($body);
+
+        // Return a PSR-7 Response (using a basic implementation)
+        return new \GuzzleHttp\Psr7\Response($statusCode, $headers, $stream);
+    }
+
+    private function createStream($body)
+    {
+        $stream = \GuzzleHttp\Psr7\stream_for($body);
+        return $stream;
     }
 
     private function getHeaders(\Psr\Http\Message\RequestInterface $request)

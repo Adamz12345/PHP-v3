@@ -18,32 +18,32 @@ class GooglePayEventHandler implements EventHandlerInterface
 
     public function onSuccessful($transactionData): void
     {
-        // TODO: Implement onSuccessful() method.
+        self::sendAnalytics('Initiate-GooglePay-Success');
     }
 
     public function onFailure($transactionData): void
     {
-        // TODO: Implement onFailure() method.
+        self::sendAnalytics('Initiate-GooglePay-Failed');
     }
 
     public function onRequery($transactionReference): void
     {
-        // TODO: Implement onRequery() method.
+        self::sendAnalytics('Initiate-GooglePay-Requery');
     }
 
     public function onRequeryError($requeryResponse): void
     {
-        // TODO: Implement onRequeryError() method.
+        self::sendAnalytics('Initiate-GooglePay-Requery-Error');
     }
 
     public function onCancel($transactionReference): void
     {
-        // TODO: Implement onCancel() method.
+        self::sendAnalytics('Initiate-GooglePay-Cancelled');
     }
 
     public function onTimeout($transactionReference, $data): void
     {
-        // TODO: Implement onTimeout() method.
+        self::sendAnalytics('Initiate-GooglePay-Timeout');
     }
 
     public function onAuthorization(\stdClass $response, ?array $resource = null): array

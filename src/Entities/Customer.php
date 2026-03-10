@@ -10,7 +10,13 @@ class Customer implements EntityInterface
 
     public function __construct(array $data = [])
     {
-        //TODO: validate data contains the required fields.
+        // Validate that required customer fields are present
+        $requiredFields = ['email', 'phone_number'];
+        foreach ($requiredFields as $field) {
+            if (empty($data[$field])) {
+                throw new \InvalidArgumentException("Customer field '{$field}' is required and cannot be empty.");
+            }
+        }
         $this->data = [...$data];
     }
 

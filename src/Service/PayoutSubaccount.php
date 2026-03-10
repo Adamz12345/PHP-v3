@@ -26,8 +26,21 @@ class PayoutSubaccount extends Service
 
     public function confirmPayload(Payload $payload): array
     {
-        //TODO: throw exceptions on missing params
+        // Validate required parameters before processing
         $customer = $payload->get('customer')->toArray();
+        
+        foreach ($this->requiredParams as $param) {
+            if ($param === 'email' && empty($customer['email'])) {
+                throw new \InvalidArgumentException("PSA Service: Customer email is required.");
+            }
+            if ($param === 'mobilenumber' && empty($customer['phone_number'])) {
+                throw new \InvalidArgumentException("PSA Service: Customer phone number is required.");
+            }
+            if ($param === 'country' && empty($payload->get('country'))) {
+                throw new \InvalidArgumentException("PSA Service: Country is required.");
+            }
+        }
+        
         $email = $customer['email'];
         $phone = $customer['phone_number'];
         $fullname = $customer['fullname'];

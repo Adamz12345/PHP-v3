@@ -76,7 +76,7 @@ class Transfer extends Service implements Payment
         $this->eventHandler::startRecording();
         $response = $this->request($payload, 'POST');
         $this->eventHandler::setResponseTime();
-        return $this->handleInitiationResponse($response); //TODO: change to return an Array
+        return $this->handleInitiationResponse($response);
     }
 
     private function handleInitiationResponse(stdClass $data): array
@@ -98,7 +98,7 @@ class Transfer extends Service implements Payment
 
     public function save(callable $callback): void
     {
-        // TODO: Implement save() method.
+        $callback($this->eventHandler);
     }
 
     /**

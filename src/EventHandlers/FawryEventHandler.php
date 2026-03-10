@@ -16,32 +16,32 @@ class FawryEventHandler implements EventHandlerInterface
 
     public function onSuccessful($transactionData): void
     {
-        // TODO: Implement onSuccessful() method.
+        self::sendAnalytics('Initiate-Fawry-Success');
     }
 
     public function onFailure($transactionData): void
     {
-        // TODO: Implement onFailure() method.
+        self::sendAnalytics('Initiate-Fawry-Failed');
     }
 
     public function onRequery($transactionReference): void
     {
-        // TODO: Implement onRequery() method.
+        self::sendAnalytics('Initiate-Fawry-Requery');
     }
 
     public function onRequeryError($requeryResponse): void
     {
-        // TODO: Implement onRequeryError() method.
+        self::sendAnalytics('Initiate-Fawry-Requery-Error');
     }
 
     public function onCancel($transactionReference): void
     {
-        // TODO: Implement onCancel() method.
+        self::sendAnalytics('Initiate-Fawry-Cancelled');
     }
 
     public function onTimeout($transactionReference, $data): void
     {
-        // TODO: Implement onTimeout() method.
+        self::sendAnalytics('Initiate-Fawry-Timeout');
     }
 
     public function onAuthorization(\stdClass $response, ?array $resource = null): array

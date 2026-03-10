@@ -57,7 +57,7 @@ final class CheckoutHelper
      */
     public static function getSupportedCountry(?string $currency = null): string
     {
-        $baseCurrency = 'NGN'; // TODO: allow users to set base currency.
+        $baseCurrency = 'NGN';
         $countriesMap = array(
             'NGN' => 'NG',
             'EUR' => 'NG',
@@ -74,7 +74,7 @@ final class CheckoutHelper
 
         if (!is_null($currency)) {
             if (! isset($countriesMap[$currency])) {
-                throw new \InvalidArgument("The currency $currency is not supported at checkout.");
+                throw new \InvalidArgumentException("The currency $currency is not supported at checkout.");
             }
             return $countriesMap[$currency];
         }

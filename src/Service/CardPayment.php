@@ -46,8 +46,8 @@ class CardPayment extends Service implements Payment
      */
     public function initiate(Payload $payload): array
     {
-        if (self::$count >= 2) {
-            //TODO: if payload does not have pin on 2nd request, trigger a warning.
+        if (self::$count >= 2 && !$payload->has('pin')) {
+            $this->logger->warning('Card Service: PIN not provided on retry attempt, payment may fail without PIN.');
         }
         $this->logger->notice('Card Service::Initiating Card Payment...');
 
@@ -63,7 +63,7 @@ class CardPayment extends Service implements Payment
 
     public function save(callable $callback): void
     {
-        // TODO: Implement save() method.
+        $callback($this->eventHandler);
     }
 
     /**

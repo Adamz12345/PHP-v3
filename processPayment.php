@@ -2,60 +2,102 @@
 
 declare(strict_types=1);
 
-# if vendor file is not present, notify developer to run composer install.
-require __DIR__.'/vendor/autoload.php';
+/**
+ * Flutterwave Payment Processor
+ * 
+ * This script handles payment processing through the Flutterwave SDK.
+ * It manages both payment initiation and callback verification.
+ */
+
+require __DIR__ . '/vendor/autoload.php';
 
 use Flutterwave\Controller\PaymentController;
 use Flutterwave\EventHandlers\ModalEventHandler as PaymentHandler;
 use Flutterwave\Flutterwave;
 use Flutterwave\Library\Modal;
-use \Flutterwave\Config\ForkConfig;
 
-// start a session.
+// Start session for tracking
 session_start();
 
-// Define custom config.
-// $myConfig = ForkConfig::setUp(
-//     'FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X', //Secret key
-//     'FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X', // Public key
-//     'FLWSECK_TESTXXXXXXXXXXX', //Encryption key
-//     'staging' //Environment Variable
-// );
-
-// uncomment the block if you just want to pass the keys with a specific configuration.
-// $_ENV['SECRET_KEY'] = "FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
-// $_ENV['PUBLIC_KEY'] = "FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
-// $_ENV['ENCRYPTION_KEY'] = "FLWSECK_TESTXXXXXXXXXXXX";
-// $_ENV['ENV'] = "staging";
-
-// controller default
+// Initialize controller variable
 $controller = null;
+$error = null;
+$success = null;
 
 try {
-    Flutterwave::bootstrap(); // create a .env or Flutterwave::bootstrap($myConfig)
+    /**
+     * Bootstrap Flutterwave Configuration
+     * This reads from .env file automatically
+     */
+    Flutterwave::bootstrap();
+    
+    // Initialize payment handler and client
     $customHandler = new PaymentHandler();
     $client = new Flutterwave();
-    $modalType = Modal::STANDARD; // Modal::POPUP or Modal::STANDARD
-    $controller = new PaymentController( $client, $customHandler, $modalType );
-} catch(\Exception $e ) {
-    echo $e->getMessage();
+    
+    // Use STANDARD modal for better user experience
+    $modalType = Modal::STANDARD; // Modal::STANDARD or Modal::POPUP
+    
+    // Create payment controller
+    $controller = new PaymentController($client, $customHandler, $modalType);
+    
+} catch (\Exception $e) {
+    $error = "Initialization Error: " . $e->getMessage();
+    error_log("Flutterwave Initialization Failed: " . $e->getMessage());
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $request = $_REQUEST;
-    $request['redirect_url'] = $_SERVER['HTTP_ORIGIN'] . $_SERVER['REQUEST_URI'];
+/**
+ * Handle Payment Form Submission
+ */
+if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_GET['tx_ref'])) {
+    if ($controller === null) {
+        die($error);
+    }
+    
     try {
-        $controller->process( $request );
-    } catch(\Exception $e) {
-        echo $e->getMessage();
+        // Collect request data
+        $request = $_REQUEST;
+        
+        // Add redirect URL for callback
+        $request['redirect_url'] = $_SERVER['HTTP_ORIGIN'] . $_SERVER['REQUEST_URI'];
+        
+        // Log payment attempt
+        error_log("Payment Attempt: " . json_encode([
+            'email' => $request['email'] ?? 'unknown',
+            'amount' => $request['amount'] ?? '0',
+            'currency' => $request['currency'] ?? 'NGN',
+            'timestamp' => date('Y-m-d H:i:s')
+        ]));
+        
+        // Process the payment
+        $controller->process($request);
+        
+    } catch (\Exception $e) {
+        $error = "Payment Processing Error: " . $e->getMessage();
+        error_log("Payment Processing Failed: " . $e->getMessage());
     }
 }
 
-$request = $_GET;
-# Confirming Payment.
-if(isset($request['tx_ref'])) {
-    $controller->callback( $request );
-} else {
+/**
+ * Handle Payment Callback/Verification
+ */
+if (isset($_GET['tx_ref'])) {
+    if ($controller === null) {
+        die($error);
+    }
     
+    try {
+        // Log callback received
+        error_log("Payment Callback Received: " . $_GET['tx_ref']);
+        
+        // Verify the payment
+        $controller->callback($_GET);
+        
+    } catch (\Exception $e) {
+        $error = "Callback Processing Error: " . $e->getMessage();
+        error_log("Callback Processing Failed: " . $e->getMessage());
+    }
 }
-exit();
+
+exit;
+

@@ -28,21 +28,21 @@ class PreEventHandler implements EventHandlerInterface
 
     public function onRequery($transactionReference): void
     {
-        // TODO: Implement onRequery() method.
+        self::sendAnalytics('Preauth-Requery');
     }
 
     public function onRequeryError($requeryResponse): void
     {
-        // TODO: Implement onRequeryError() method.
+        self::sendAnalytics('Preauth-Requery-Error');
     }
 
     public function onCancel($transactionReference): void
     {
-        // TODO: Implement onCancel() method.
+        self::sendAnalytics('Preauth-Cancelled');
     }
 
     public function onTimeout($transactionReference, $data): void
     {
-        // TODO: Implement onTimeout() method.
+        self::sendAnalytics('Preauth-Timeout');
     }
 }

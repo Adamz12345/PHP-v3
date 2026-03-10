@@ -96,7 +96,7 @@ class MobileMoney extends Service implements Payment
 
     public function save(callable $callback): void
     {
-        // TODO: Implement save() method.
+        $callback($this->eventHandler);
     }
 
     private function isNetworkValid(array $otherData, string $currency): bool

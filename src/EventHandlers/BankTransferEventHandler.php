@@ -21,7 +21,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onSuccessful($transactionData): void
     {
-        // TODO: Implement onSuccessful() method.
+        self::sendAnalytics('Initiate-BankTransfer-Success');
     }
 
     /**
@@ -29,7 +29,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onFailure($transactionData): void
     {
-        // TODO: Implement onFailure() method.
+        self::sendAnalytics('Initiate-BankTransfer-Failed');
     }
 
     /**
@@ -37,7 +37,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onRequery($transactionReference): void
     {
-        // TODO: Implement onRequery() method.
+        self::sendAnalytics('Initiate-BankTransfer-Requery');
     }
 
     /**
@@ -45,7 +45,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onRequeryError($requeryResponse): void
     {
-        // TODO: Implement onRequeryError() method.
+        self::sendAnalytics('Initiate-BankTransfer-Requery-Error');
     }
 
     /**
@@ -53,7 +53,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onCancel($transactionReference): void
     {
-        // TODO: Implement onCancel() method.
+        self::sendAnalytics('Initiate-BankTransfer-Cancelled');
     }
 
     /**
@@ -61,7 +61,7 @@ class BankTransferEventHandler implements EventHandlerInterface
      */
     public function onTimeout($transactionReference, $data): void
     {
-        // TODO: Implement onTimeout() method.
+        self::sendAnalytics('Initiate-BankTransfer-Timeout');
     }
 
     /**

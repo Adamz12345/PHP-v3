@@ -72,7 +72,7 @@ class Mpesa extends Service implements Payment
 
     public function save(callable $callback): void
     {
-        // TODO: Implement save() method.
+        $callback($this->eventHandler);
     }
 
     /**
