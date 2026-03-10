@@ -1,0 +1,27 @@
+{
+  "name": "flutterwave-nextjs-payment",
+  "version": "1.0.0",
+  "description": "Flutterwave v3 Payment Integration for Next.js 16",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^19.0.0-rc-66ad55d7-20250310",
+    "react-dom": "^19.0.0-rc-66ad55d7-20250310",
+    "next": "^16.0.0",
+    "axios": "^1.6.2",
+    "crypto": "^1.0.3",
+    "iron-webcrypto": "^1.1.1",
+    "js-sha256": "^0.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}
