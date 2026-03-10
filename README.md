@@ -2,276 +2,334 @@
     <img title="Flutterwave" height="200" src="https://flutterwave.com/images/logo/full.svg" width="50%"/>
 </p>
 
-# Flutterwave v3 PHP SDK.
+# Flutterwave v3 - Complete SDK Integration
 
-![Packagist Downloads](https://img.shields.io/packagist/dt/flutterwavedev/flutterwave-v3)
-![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/flutterwavedev/flutterwave-v3)
-![GitHub stars](https://img.shields.io/github/stars/Flutterwave/Flutterwave-PHP-v3)
-![Packagist License](https://img.shields.io/packagist/l/flutterwavedev/flutterwave-v3)
+## Overview
 
-This Flutterwave v3 PHP Library provides easy access to Flutterwave for Business (F4B) v3 APIs from php apps. It abstracts the complexity involved in direct integration and allows you to make quick calls to the APIs.
+This repository contains **two complete implementations** of the Flutterwave v3 payment gateway:
 
-Available features include:
+1. **Next.js 16 Implementation** - Modern, v0.dev-compatible JavaScript/TypeScript version
+2. **PHP SDK Documentation** - Complete guide for the original PHP implementation
 
-- Collections: Card, Account, Mobile money, Bank Transfers, USSD, Barter, NQR.
-- Payouts and Beneficiaries.
-- Recurring payments: Tokenization and Subscriptions.
-- Split payments
-- Card issuing
-- Transactions dispute management: Refunds.
-- Transaction reporting: Collections, Payouts, Settlements, and Refunds.
-- Bill payments: Airtime, Data bundle, Cable, Power, Toll, E-bills, and Remitta.
-- Identity verification: Resolve bank account, resolve BVN information.
+![License](https://img.shields.io/badge/License-MIT-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-Latest-blue)
+![PHP](https://img.shields.io/badge/PHP-7.4+-purple)
 
-## Table of Contents
-1. [Requirements](#requirements)
-2. [Installation](#installation)
-3. [Initialization](#initialization)
-4. [Usage](#usage)
-5. [Testing](#testing)
-6. [Debugging Errors](#debugging-errors)
-7. [Support](#support)
-8. [Contribution guidelines](#contribution-guidelines)
-9. [License](#license)
-10. [Changelog](#changelog)
+## Features
 
-<a id="requirements"></a>
+Both implementations support:
+- Payment Initialization (Card, Account, Mobile Money, Bank Transfers, USSD, etc.)
+- Transaction Verification & Retrieval
+- Webhook Handling with Signature Verification
+- Multiple Payment Methods (Card, Bank Transfer, Mobile Money, USSD)
+- Recurring Payments & Subscriptions
+- Split Payments
+- Refunds & Dispute Management
+- Settlement Reporting
+- Bill Payments (Airtime, Data, Cable, Power, etc.)
+- Identity Verification (BVN, Bank Account Resolution)
+
+## Quick Start
+
+### Option A: Next.js Implementation (v0.dev Compatible)
+
+Perfect for modern JavaScript/TypeScript applications and Vercel deployment.
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+
+# Add your Flutterwave keys to .env.local
+
+# Start development server
+npm run dev
+```
+
+Visit `http://localhost:3000` to see the demo.
+
+### Option B: PHP Implementation
+
+Perfect for existing PHP applications.
+
+```bash
+# Install via Composer
+composer require flutterwavedev/flutterwave-v3
+
+# Copy configuration
+cp .env.example .env
+
+# Add your Flutterwave keys to .env
+
+# Start your PHP server
+php -S localhost:8000
+```
+
+## Documentation
+
+- **[Next.js Implementation Guide](./NEXTJS_SETUP.md)** - Complete setup, API routes, components, and deployment
+- **[PHP Complete Setup Guide](./PHP_COMPLETE_SETUP.md)** - Full PHP SDK documentation with examples
 
 ## Requirements
 
-1. Flutterwave for business [API Keys](https://developer.flutterwave.com/docs/integration-guides/authentication)
-2. Acceptable PHP versions: >= 7.4.0. for older versions of PHP use the [Legacy Branch]( https://github.com/Flutterwave/PHP-v3/tree/legacy )
+### For Next.js Implementation:
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+- Modern browser with JavaScript enabled
 
+### For PHP Implementation:
+- PHP 7.4 or higher
+- Composer package manager
+- cURL extension enabled
+- Flutterwave for Business [API Keys](https://developer.flutterwave.com/docs/integration-guides/authentication)
 
-<a id="installation"></a>
 
 ## Installation
 
-### Download Release Artifact
-If you do not want to make use of composer. each [release](https://github.com/Flutterwave/PHP-v3/releases/) contains a zip with all the dependencies installed. Simply download the one that supports your php version.
-
-### Installation via Composer.
-
-To install the package via Composer, run the following command:
-```shell
-composer require flutterwavedev/flutterwave-v3
-```
-
-<a id="initialization"></a>
-
-## Initialization
-
-Create a .env file and follow the format of the `.env.example` file
-Save your PUBLIC_KEY, SECRET_KEY, ENV in the `.env` file
+### Next.js Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd flutterwave-nextjs
+
+# Install dependencies
+npm install
+
+# Copy environment template
+cp .env.example .env.local
+
+# Edit .env.local with your Flutterwave API keys
+# FLUTTERWAVE_PUBLIC_KEY=your_key_here
+# FLUTTERWAVE_SECRET_KEY=your_key_here
+
+# Start development server
+npm run dev
+```
+
+### PHP Installation
+
+```bash
+# Install via Composer
+composer require flutterwavedev/flutterwave-v3
+
+# Copy environment template
 cp .env.example .env
-```
-Your `.env` file should look this. Make sure to retrieve your API keys from your dashboard.
 
-```env
-FLW_PUBLIC_KEY=FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X
-FLW_SECRET_KEY=FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X
-FLW_ENCRYPTION_KEY=FLWSECK_XXXXXXXXXXXXXXXX
-FLW_ENV='staging/production'
-FLW_LOG_DIR=logs
+# Edit .env with your Flutterwave API keys
+# FLW_PUBLIC_KEY=your_key_here
+# FLW_SECRET_KEY=your_key_here
+
+# Install dependencies
+composer install
 ```
 
-### Render Payment Modal
+## Getting API Keys
 
-The SDK provides two easy methods of making collections via the famous payment modal. [Learn more](#)
+1. Visit [Flutterwave Dashboard](https://dashboard.flutterwave.com)
+2. Sign up or log in
+3. Go to Settings → API Keys
+4. Copy your Public and Secret keys
+5. Add them to your `.env` or `.env.local` file
 
-1. [Flutterwave Inline]( https://developer.flutterwave.com/docs/collecting-payments/inline )
-2. [Flutterwave Standard]( https://developer.flutterwave.com/docs/collecting-payments/standard )
+## Usage Examples
 
-### Get Started
+### Next.js - Simple Payment Form
 
+```tsx
+import PaymentForm from '@/components/PaymentForm';
 
-
-Edit the `paymentForm.php` and `processPayment.php` files to suit your purpose. Both files are well documented.
-
-Simply redirect to the `paymentForm.php` file on your browser to process a payment.
-
-In this implementation, we are expecting a form encoded POST request to this script.
-The request will contain the following parameters.
-
-```json
-
- {
-    "amount": "The amount required to be charged. (*)",
-    "currency": "The currency to charge in. (*)",
-    "first_name": "The first name of the customer. (*)",
-    "last_name" : "The last name of the customer. (*)",
-    "email": "The customers email address. (*)",
-    "phone_number": "The customer's phone number. (Optional).",
-    "success_url": "The url to redirect customer to after successful payment.",
-    "failure_url": "The url to redirect customer to after a failed payment.",
-    "tx_ref":"The unique transaction identifier. if ommited the apiclient would generate one"
- }
-
+export default function PaymentPage() {
+  return (
+    <PaymentForm
+      onSuccess={(data) => console.log('Payment successful!', data)}
+      onError={(error) => console.error('Payment failed:', error)}
+    />
+  );
+}
 ```
 
-The script in `paymentProcess.php` handles the request data via the `PaymentController`. If you are using a Framework like Laravel or CodeIgniter you might want to take a look at the [PaymentController](#)
+### Next.js - API Route for Payment
+
+```typescript
+// app/api/payments/initiate/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import FlutterwaveService from '@/lib/flutterwave.service';
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const service = new FlutterwaveService();
+  
+  const response = await service.initializePayment({
+    tx_ref: `TX-${Date.now()}`,
+    amount: body.amount,
+    currency: 'NGN',
+    customer: {
+      email: body.email,
+      name: body.name,
+    }
+  });
+
+  return NextResponse.json(response);
+}
+```
+
+### PHP - Card Payment
 
 ```php
 <?php
-
-declare(strict_types=1);
-
-# if vendor file is not present, notify developer to run composer install.
-require __DIR__.'/vendor/autoload.php';
-
-use Flutterwave\Controller\PaymentController;
-use Flutterwave\EventHandlers\ModalEventHandler as PaymentHandler;
+use Flutterwave\Service\CardPayment;
 use Flutterwave\Flutterwave;
-use Flutterwave\Library\Modal;
 
-# start a session.
-session_start();
-
-try {
-    Flutterwave::bootstrap();
-    $customHandler = new PaymentHandler();
-    $client = new Flutterwave();
-    $modalType = Modal::POPUP; // Modal::POPUP or Modal::STANDARD
-    $controller = new PaymentController( $client, $customHandler, $modalType );
-} catch(\Exception $e ) {
-    echo $e->getMessage();
-}
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $request = $_REQUEST;
-    $request['redirect_url'] = $_SERVER['HTTP_ORIGIN'] . $_SERVER['REQUEST_URI'];
-    try {
-        $controller->process( $request );
-    } catch(\Exception $e) {
-        echo $e->getMessage();
-    }
-}
-
-$request = $_GET;
-# Confirming Payment.
-if(isset($request['tx_ref'])) {
-    $controller->callback( $request );
-} else {
-    
-}
-exit();
-
-```
-<br>
-
-### Configuration settings
-Create a .env file and add the bootstrap method first before initiating a charge.
-```php
-use \Flutterwave\Flutterwave;
-
-# normal configuration
-Flutterwave::bootstrap(); # this will use the default configuration set in .env
-```
-
-if you do not wish to use a .env, you can simply pass your API keys like the example below.
-
-```php
-use \Flutterwave\Helper\Config;
-
-$myConfig = Config::setUp(
-    'FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X',
-    'FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X',
-    'FLWSECK_XXXXXXXXXXXXXXXX',
-    'staging'
+$flutterwave = new Flutterwave(
+    $_ENV['FLW_PUBLIC_KEY'],
+    $_ENV['FLW_SECRET_KEY']
 );
- 
-Flutterwave::bootstrap($myConfig);
-````
 
-<a id="usage"></a>
+$card = new CardPayment($flutterwave);
 
-## Usage
+$response = $card->charge([
+    'card_number' => '4239999999993030',
+    'cvv' => '089',
+    'expiry_month' => '09',
+    'expiry_year' => '27',
+    'amount' => 5000,
+    'email' => 'customer@example.com',
+    'tx_ref' => 'TX-' . time(),
+]);
+?>
+```
 
-### Charge
-1. [Account Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#account)
-2. [ACH Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#ach)
-3. [Card Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#card)
-4. [Mobile Money](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#mobile-money)
-5. [FawryPay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#fawry-pay)
-6. [GooglePay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#google-pay)
-7. [ApplePay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#apple-pay)
-8. [Mpesa](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#mpesa)
-9. [BankTransfer](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#bank-transfers)
-10. [USSD](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#ussd)
-11. [eNaira](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#enaira)
+### PHP - Bank Transfer
 
-### Resources
-1. [Banks](https://github.com/Flutterwave/PHP-v3/wiki/Banks)
-2. [Beneficiaries](https://github.com/Flutterwave/PHP-v3/wiki/Beneficiaries)
-3. [Payment Plans](https://github.com/Flutterwave/PHP-v3/wiki/Payment-Plan)
-4. [Collection Subaccounts](https://github.com/Flutterwave/PHP-v3/wiki/Collection-Subaccounts)
-5. [Payout Subaccounts](https://github.com/Flutterwave/PHP-v3/wiki/Payout-Subaccounts)
-6. [Subscriptions](https://github.com/Flutterwave/PHP-v3/wiki/Subscriptions)
-7. [Transfers](https://github.com/Flutterwave/PHP-v3/wiki/Transfer-(Payouts))
-8. [Transactions](https://github.com/Flutterwave/PHP-v3/wiki/Transactions)
-9. [Virtual Cards](https://github.com/Flutterwave/PHP-v3/wiki/Virtual-Cards)
-10. [Virtual Account](https://github.com/Flutterwave/PHP-v3/wiki/Virtual-Account)
-11. [Misc](https://github.com/Flutterwave/PHP-v3/wiki/Misc)
+```php
+<?php
+use Flutterwave\Service\BankTransfer;
+
+$bankTransfer = new BankTransfer($flutterwave);
+
+$response = $bankTransfer->initiate([
+    'account_number' => '0690000031',
+    'account_bank' => '044',
+    'amount' => 5000,
+    'email' => 'customer@example.com',
+    'tx_ref' => 'BANK-' . time(),
+]);
+?>
+```
+
+## API Endpoints (Next.js)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/payments/initiate` | Initialize payment |
+| GET/POST | `/api/payments/verify` | Verify transaction |
+| POST | `/api/payments/webhook` | Webhook handler |
+| POST | `/api/payments/bank-transfer` | Create bank transfer |
+| GET | `/api/payments/transactions` | Get transactions |
+
+## Payment Methods Supported
+
+1. **Card Payments** - Debit/Credit cards with 3DS support
+2. **Bank Transfers** - Direct bank account transfers
+3. **Mobile Money** - MTN, Vodafone, AirtelTigo (Ghana, Uganda, Tanzania)
+4. **USSD** - USSD payment codes (Nigeria)
+5. **Account Charges** - Direct account debit
+6. **ACH** - Automated Clearing House (US)
+7. **Digital Wallets** - Apple Pay, Google Pay
+8. **Bill Payments** - Airtime, Data, Cable, Power
+9. **Crypto** - Cryptocurrency payments
 
 ## Testing
 
-All of the SDK's tests are written with PHP's ```phpunit``` module. The tests currently test:
-```Account```,
-```Card```,
-```Transfer```,
-```Preauth```,
-```Collection Subaccount```,
-```Payout Subaccount```,
-```Subscriptions``` and
-```Paymentplan```
+### Test Cards (Flutterwave Staging)
 
-They can be run like so:
+**Successful Payment:**
+- Card: 4239 9999 9999 3030
+- CVV: 089
+- Expiry: 09/27
 
-```sh
+**Failed Payment:**
+- Card: 5399 9999 9999 9995
+- CVV: 589
+- Expiry: 09/27
+
+### Running Tests
+
+#### Next.js Tests
+
+```bash
+npm test
+```
+
+#### PHP Tests
+
+```bash
 phpunit
 ```
 
->**NOTE:** If the test fails for creating a subaccount, just change the ```account_number``` ```account_bank```  and ```businesss_email``` to something different
+## Deployment
 
->**NOTE:** The test may fail for account validation - ``` Pending OTP validation``` depending on whether the service is down or not
-<br>
+### Deploy Next.js to Vercel
 
+```bash
+# Install Vercel CLI
+npm install -g vercel
 
-<a id="debugging errors"></a>
+# Deploy
+vercel
 
-## Debugging Errors
-We understand that you may run into some errors while integrating our library. You can read more about our error messages [here](https://developer.flutterwave.com/docs/integration-guides/errors).
+# Set environment variables in Vercel dashboard
+```
 
-For `authorization` and `validation` error responses, double-check your API keys and request. If you get a `server` error, kindly engage the team for support.
+### Deploy PHP to Server
 
+```bash
+# Push to server via Git or FTP
+git push origin main
 
-<a id="support"></a>
+# Run composer install
+composer install --optimize-autoloader
+
+# Set environment variables on server
+```
+
+## Debugging & Support
+
+### Common Issues
+
+1. **"API Key Invalid"** - Verify keys in environment variables
+2. **"Signature verification failed"** - Check webhook secret key
+3. **"Transaction not found"** - Verify transaction ID and API keys
+4. **"Rate limited"** - Wait before making more requests
+
+### Resources
+
+- [Error Messages Guide](https://developer.flutterwave.com/docs/integration-guides/errors)
+- [API Documentation](https://developer.flutterwave.com)
+- [Dashboard](https://dashboard.flutterwave.com)
 
 ## Support
-For additional assistance using this library, contact the developer experience (DX) team via [email](mailto:developers@flutterwavego.com) or on [slack](https://bit.ly/34Vkzcg).
 
-You can also follow us [@FlutterwaveEng](https://twitter.com/FlutterwaveEng) and let us know what you think 😊.
+- **Email:** [developers@flutterwavego.com](mailto:developers@flutterwavego.com)
+- **Slack:** [Flutterwave Community](https://bit.ly/34Vkzcg)
+- **Twitter:** [@FlutterwaveEng](https://twitter.com/FlutterwaveEng)
 
+## Contributing
 
-<a id="contribution-guidelines"></a>
-
-## Contribution guidelines
-Read more about our community contribution guidelines [here](/CONTRIBUTING.md)
-
-
-<a id="license"></a>
+We welcome contributions! Please read our [contribution guidelines](./CONTRIBUTING.md) first.
 
 ## License
 
-By contributing to this library, you agree that your contributions will be licensed under its [MIT license](/LICENSE).
+MIT License - See [LICENSE](./LICENSE) file for details.
 
-Copyright (c) Flutterwave Inc.
+Copyright (c) 2024 Flutterwave Inc.
 
-<a id="references"></a>
+## References
 
-## Flutterwave API  References
-
-- [Flutterwave API Documentation](https://developer.flutterwave.com)
-- [Flutterwave Dashboard](https://app.flutterwave.com)  
+- [Flutterwave Developer Docs](https://developer.flutterwave.com)
+- [Flutterwave Dashboard](https://dashboard.flutterwave.com)
+- [PHP SDK GitHub](https://github.com/Flutterwave/PHP-v3)
+- [Next.js Documentation](https://nextjs.org/docs)
