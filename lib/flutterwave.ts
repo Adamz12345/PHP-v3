@@ -10,6 +10,9 @@ if (!SECRET_KEY) {
   throw new Error('FLW_SECRET_KEY environment variable is not set');
 }
 
+// Type assertion to tell TypeScript that SECRET_KEY is definitely a string
+const VERIFIED_SECRET_KEY: string = SECRET_KEY;
+
 interface FlutterwaveConfig {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: Record<string, unknown>;
@@ -32,7 +35,7 @@ export async function makeFlutterwaveRequest<T>(
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${SECRET_KEY}`,
+    Authorization: `Bearer ${VERIFIED_SECRET_KEY}`,
   };
 
   const options: RequestInit = {
@@ -147,7 +150,7 @@ export async function verifyWebhookSignature(
 ): Promise<boolean> {
   const crypto = await import('crypto');
   const hash = crypto
-    .createHmac('sha256', SECRET_KEY)
+    .createHmac('sha256', VERIFIED_SECRET_KEY)
     .update(body)
     .digest('hex');
 
