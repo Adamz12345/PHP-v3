@@ -1,3 +1,24 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+/dist
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Windows template
 # Windows thumbnail cache files
@@ -11,7 +32,6 @@ ehthumbs_vista.db
 
 # Folder config file
 [Dd]esktop.ini
-.env
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
