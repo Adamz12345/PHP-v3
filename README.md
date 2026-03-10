@@ -1,277 +1,488 @@
-<p align="center">
-    <img title="Flutterwave" height="200" src="https://flutterwave.com/images/logo/full.svg" width="50%"/>
-</p>
+# Flutterwave Payment Integration with Next.js
 
-# Flutterwave v3 PHP SDK.
+Production-ready payment gateway integration using Next.js Server Actions and secure server-side validation.
 
-![Packagist Downloads](https://img.shields.io/packagist/dt/flutterwavedev/flutterwave-v3)
-![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/flutterwavedev/flutterwave-v3)
-![GitHub stars](https://img.shields.io/github/stars/Flutterwave/Flutterwave-PHP-v3)
-![Packagist License](https://img.shields.io/packagist/l/flutterwavedev/flutterwave-v3)
+## Overview
 
-This Flutterwave v3 PHP Library provides easy access to Flutterwave for Business (F4B) v3 APIs from php apps. It abstracts the complexity involved in direct integration and allows you to make quick calls to the APIs.
+This project implements a complete payment flow using Flutterwave's API, with:
+- **Server-side validation** - Amount validation on the backend to prevent tampering
+- **Secure API communication** - Bearer token authentication with Flutterwave
+- **Webhook verification** - HMAC signature verification for payment callbacks
+- **Professional UI** - Responsive checkout form with real-time validation
+- **Error handling** - Comprehensive error management and user feedback
 
-Available features include:
+## Architecture
 
-- Collections: Card, Account, Mobile money, Bank Transfers, USSD, Barter, NQR.
-- Payouts and Beneficiaries.
-- Recurring payments: Tokenization and Subscriptions.
-- Split payments
-- Card issuing
-- Transactions dispute management: Refunds.
-- Transaction reporting: Collections, Payouts, Settlements, and Refunds.
-- Bill payments: Airtime, Data bundle, Cable, Power, Toll, E-bills, and Remitta.
-- Identity verification: Resolve bank account, resolve BVN information.
+### Directory Structure
 
-## Table of Contents
-1. [Requirements](#requirements)
-2. [Installation](#installation)
-3. [Initialization](#initialization)
-4. [Usage](#usage)
-5. [Testing](#testing)
-6. [Debugging Errors](#debugging-errors)
-7. [Support](#support)
-8. [Contribution guidelines](#contribution-guidelines)
-9. [License](#license)
-10. [Changelog](#changelog)
+```
+app/
+├── layout.tsx              # Root layout with metadata
+├── page.tsx                # Main checkout page
+├── actions/
+│   └── payment.ts          # Server actions for payment operations
+├── api/
+│   └── webhook/
+│       └── route.ts        # Webhook endpoint for payment callbacks
+└── payment/
+    └── callback/
+        └── page.tsx        # Payment verification callback page
 
-<a id="requirements"></a>
+lib/
+└── flutterwave.ts          # Flutterwave API utility library
 
-## Requirements
+components/
+└── CheckoutForm.tsx        # Checkout form component
 
-1. Flutterwave for business [API Keys](https://developer.flutterwave.com/docs/integration-guides/authentication)
-2. Acceptable PHP versions: >= 7.4.0. for older versions of PHP use the [Legacy Branch]( https://github.com/Flutterwave/PHP-v3/tree/legacy )
-
-
-<a id="installation"></a>
-
-## Installation
-
-### Download Release Artifact
-If you do not want to make use of composer. each [release](https://github.com/Flutterwave/PHP-v3/releases/) contains a zip with all the dependencies installed. Simply download the one that supports your php version.
-
-### Installation via Composer.
-
-To install the package via Composer, run the following command:
-```shell
-composer require flutterwavedev/flutterwave-v3
+globals.css                 # Global styles and design tokens
+tailwind.config.js          # Tailwind CSS configuration
+tsconfig.json               # TypeScript configuration
 ```
 
-<a id="initialization"></a>
+## Environment Setup
 
-## Initialization
-
-Create a .env file and follow the format of the `.env.example` file
-Save your PUBLIC_KEY, SECRET_KEY, ENV in the `.env` file
+### 1. Install Dependencies
 
 ```bash
-cp .env.example .env
+npm install
+# or
+yarn install
+# or
+pnpm install
 ```
-Your `.env` file should look this. Make sure to retrieve your API keys from your dashboard.
+
+### 2. Configure Environment Variables
+
+Create a `.env.local` file in the project root:
 
 ```env
-FLW_PUBLIC_KEY=FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X
-FLW_SECRET_KEY=FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X
-FLW_ENCRYPTION_KEY=FLWSECK_XXXXXXXXXXXXXXXX
-FLW_ENV='staging/production'
-FLW_LOG_DIR=logs
+# Flutterwave API Keys
+NEXT_PUBLIC_FLW_PUBLIC_KEY=your_public_key_from_flutterwave_dashboard
+FLW_SECRET_KEY=your_secret_key_from_flutterwave_dashboard
+
+# Application Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### Render Payment Modal
+**Where to get your keys:**
+1. Sign up at [Flutterwave Dashboard](https://dashboard.flutterwave.com)
+2. Navigate to Settings → API Keys
+3. Copy your Secret Key and Public Key
+4. Add them to `.env.local`
 
-The SDK provides two easy methods of making collections via the famous payment modal. [Learn more](#)
+### 3. Get Your Keys from Flutterwave
 
-1. [Flutterwave Inline]( https://developer.flutterwave.com/docs/collecting-payments/inline )
-2. [Flutterwave Standard]( https://developer.flutterwave.com/docs/collecting-payments/standard )
+1. Go to [Flutterwave Dashboard](https://dashboard.flutterwave.com)
+2. Click on **Settings** → **API Keys**
+3. Copy both your **Secret Key** and **Public Key**
+4. Paste them in your `.env.local` file
 
-### Get Started
+## Running the Application
 
+### Development
 
-
-Edit the `paymentForm.php` and `processPayment.php` files to suit your purpose. Both files are well documented.
-
-Simply redirect to the `paymentForm.php` file on your browser to process a payment.
-
-In this implementation, we are expecting a form encoded POST request to this script.
-The request will contain the following parameters.
-
-```json
-
- {
-    "amount": "The amount required to be charged. (*)",
-    "currency": "The currency to charge in. (*)",
-    "first_name": "The first name of the customer. (*)",
-    "last_name" : "The last name of the customer. (*)",
-    "email": "The customers email address. (*)",
-    "phone_number": "The customer's phone number. (Optional).",
-    "success_url": "The url to redirect customer to after successful payment.",
-    "failure_url": "The url to redirect customer to after a failed payment.",
-    "tx_ref":"The unique transaction identifier. if ommited the apiclient would generate one"
- }
-
+```bash
+npm run dev
 ```
 
-The script in `paymentProcess.php` handles the request data via the `PaymentController`. If you are using a Framework like Laravel or CodeIgniter you might want to take a look at the [PaymentController](#)
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```php
-<?php
+### Production
 
-declare(strict_types=1);
-
-# if vendor file is not present, notify developer to run composer install.
-require __DIR__.'/vendor/autoload.php';
-
-use Flutterwave\Controller\PaymentController;
-use Flutterwave\EventHandlers\ModalEventHandler as PaymentHandler;
-use Flutterwave\Flutterwave;
-use Flutterwave\Library\Modal;
-
-# start a session.
-session_start();
-
-try {
-    Flutterwave::bootstrap();
-    $customHandler = new PaymentHandler();
-    $client = new Flutterwave();
-    $modalType = Modal::POPUP; // Modal::POPUP or Modal::STANDARD
-    $controller = new PaymentController( $client, $customHandler, $modalType );
-} catch(\Exception $e ) {
-    echo $e->getMessage();
-}
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $request = $_REQUEST;
-    $request['redirect_url'] = $_SERVER['HTTP_ORIGIN'] . $_SERVER['REQUEST_URI'];
-    try {
-        $controller->process( $request );
-    } catch(\Exception $e) {
-        echo $e->getMessage();
-    }
-}
-
-$request = $_GET;
-# Confirming Payment.
-if(isset($request['tx_ref'])) {
-    $controller->callback( $request );
-} else {
-    
-}
-exit();
-
-```
-<br>
-
-### Configuration settings
-Create a .env file and add the bootstrap method first before initiating a charge.
-```php
-use \Flutterwave\Flutterwave;
-
-# normal configuration
-Flutterwave::bootstrap(); # this will use the default configuration set in .env
+```bash
+npm run build
+npm start
 ```
 
-if you do not wish to use a .env, you can simply pass your API keys like the example below.
+## Key Components
 
-```php
-use \Flutterwave\Helper\Config;
+### 1. Flutterwave Utility (`lib/flutterwave.ts`)
 
-$myConfig = Config::setUp(
-    'FLWSECK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X',
-    'FLWPUBK_TEST-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X',
-    'FLWSECK_XXXXXXXXXXXXXXXX',
-    'staging'
+Handles all API communication with Flutterwave:
+
+```typescript
+// Initiate payment
+const response = await initiatePayment({
+  amount: 5000,
+  email: 'customer@example.com',
+  phone_number: '+234800000000',
+  full_name: 'John Doe',
+  transaction_ref: 'tx_123456789',
+  currency: 'NGN',
+  description: 'Payment for order #123'
+});
+
+// Verify payment
+const verification = await verifyPayment(transactionId);
+
+// Generate transaction reference
+const ref = generateTransactionRef();
+```
+
+### 2. Payment Server Actions (`app/actions/payment.ts`)
+
+Server actions that handle business logic and validation:
+
+```typescript
+// Server action for initiating payment
+const result = await initiatePaymentAction(
+  email,
+  fullName,
+  phoneNumber,
+  amount,
+  currency,
+  description
 );
- 
-Flutterwave::bootstrap($myConfig);
-````
 
-<a id="usage"></a>
+// Server action for verifying payment
+const verification = await verifyPaymentAction(transactionId);
+```
 
-## Usage
+**Security Features:**
+- Email validation
+- Name validation
+- Phone number validation
+- Amount validation with max limits
+- Floating-point precision handling
 
-### Charge
-1. [Account Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#account)
-2. [ACH Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#ach)
-3. [Card Charge](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#card)
-4. [Mobile Money](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#mobile-money)
-5. [FawryPay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#fawry-pay)
-6. [GooglePay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#google-pay)
-7. [ApplePay](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#apple-pay)
-8. [Mpesa](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#mpesa)
-9. [BankTransfer](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#bank-transfers)
-10. [USSD](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#ussd)
-11. [eNaira](https://github.com/Flutterwave/PHP-v3/wiki/Direct-Charge#enaira)
+### 3. Checkout Form Component (`components/CheckoutForm.tsx`)
 
-### Resources
-1. [Banks](https://github.com/Flutterwave/PHP-v3/wiki/Banks)
-2. [Beneficiaries](https://github.com/Flutterwave/PHP-v3/wiki/Beneficiaries)
-3. [Payment Plans](https://github.com/Flutterwave/PHP-v3/wiki/Payment-Plan)
-4. [Collection Subaccounts](https://github.com/Flutterwave/PHP-v3/wiki/Collection-Subaccounts)
-5. [Payout Subaccounts](https://github.com/Flutterwave/PHP-v3/wiki/Payout-Subaccounts)
-6. [Subscriptions](https://github.com/Flutterwave/PHP-v3/wiki/Subscriptions)
-7. [Transfers](https://github.com/Flutterwave/PHP-v3/wiki/Transfer-(Payouts))
-8. [Transactions](https://github.com/Flutterwave/PHP-v3/wiki/Transactions)
-9. [Virtual Cards](https://github.com/Flutterwave/PHP-v3/wiki/Virtual-Cards)
-10. [Virtual Account](https://github.com/Flutterwave/PHP-v3/wiki/Virtual-Account)
-11. [Misc](https://github.com/Flutterwave/PHP-v3/wiki/Misc)
+User-friendly payment form with:
+- Real-time form validation
+- Loading states
+- Error handling and display
+- Responsive design
+- Security notices
+
+### 4. Webhook Endpoint (`app/api/webhook/route.ts`)
+
+Handles payment confirmation callbacks from Flutterwave:
+
+```typescript
+// Webhook URL to configure in Flutterwave Dashboard:
+// https://yourdomain.com/api/webhook
+
+// Handles events:
+// - charge.completed: Successful payment
+// - charge.failed: Failed payment
+```
+
+### 5. Callback Page (`app/payment/callback/page.tsx`)
+
+Displays payment verification results:
+- Transaction details
+- Payment status
+- Customer information
+- Transaction reference management
+
+## Payment Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. User fills checkout form and clicks "Proceed to Payment" │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. CheckoutForm calls initiatePaymentAction (Server Action) │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. Server validates all inputs and amount                   │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 4. Call Flutterwave API to create transaction               │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 5. Return payment link to client                            │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 6. Redirect user to Flutterwave payment page                │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 7. User completes payment on Flutterwave                    │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+        ▼                         ▼
+  [Success]                  [Failure]
+        │                         │
+        └────────────┬────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 8. Flutterwave redirects to callback page with transaction ID│
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 9. Callback page verifies payment with verifyPaymentAction  │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 10. Display payment status to user                          │
+└─────────────────────────────────────────────────────────────┘
+
+Parallel Flow:
+┌─────────────────────────────────────────────────────────────┐
+│ Flutterwave sends webhook to /api/webhook                   │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Verify webhook signature using FLW_SECRET_KEY               │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Process charge.completed or charge.failed event             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Update database, send emails, trigger fulfillment           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Security Best Practices
+
+### 1. Server-Side Validation
+
+All critical validation happens on the server:
+- Email format validation
+- Amount validation with limits
+- Phone number validation
+- Transaction reference generation
+
+### 2. Bearer Token Authentication
+
+All API calls use Bearer token authentication:
+```typescript
+Authorization: Bearer ${FLW_SECRET_KEY}
+```
+
+### 3. Webhook Signature Verification
+
+Webhooks are verified using HMAC-SHA256:
+```typescript
+const hash = crypto
+  .createHmac('sha256', SECRET_KEY)
+  .update(body)
+  .digest('hex');
+```
+
+### 4. Environment Variable Protection
+
+- `FLW_SECRET_KEY` is server-only (never exposed to client)
+- `NEXT_PUBLIC_FLW_PUBLIC_KEY` is public (used by Flutterwave SDK)
+- All sensitive operations use server actions or API routes
+
+### 5. HTTPS Requirement
+
+Always use HTTPS in production. Update `NEXT_PUBLIC_APP_URL` accordingly.
+
+## Configuring Webhooks in Flutterwave
+
+1. Go to [Flutterwave Dashboard](https://dashboard.flutterwave.com)
+2. Navigate to **Settings** → **Webhooks**
+3. Add your webhook URL: `https://yourdomain.com/api/webhook`
+4. Select events:
+   - `charge.completed`
+   - `charge.failed`
+5. Save
+
+## Database Integration (Optional)
+
+To persist transactions in your database, update `app/api/webhook/route.ts`:
+
+```typescript
+// Example with Prisma
+async function handleChargeCompleted(payload: any) {
+  await db.transaction.create({
+    data: {
+      reference: payload.data.tx_ref,
+      amount: payload.data.amount,
+      currency: payload.data.currency,
+      status: 'completed',
+      customerEmail: payload.data.customer.email,
+      verifiedAt: new Date(),
+    },
+  });
+}
+```
+
+## Email Notifications (Optional)
+
+To send confirmation emails, update `app/api/webhook/route.ts`:
+
+```typescript
+// Example with Resend or SendGrid
+async function handleChargeCompleted(payload: any) {
+  await sendEmail({
+    to: payload.data.customer.email,
+    subject: 'Payment Confirmation',
+    template: 'payment-confirmation',
+    data: {
+      amount: payload.data.amount,
+      transactionRef: payload.data.tx_ref,
+    },
+  });
+}
+```
 
 ## Testing
 
-All of the SDK's tests are written with PHP's ```phpunit``` module. The tests currently test:
-```Account```,
-```Card```,
-```Transfer```,
-```Preauth```,
-```Collection Subaccount```,
-```Payout Subaccount```,
-```Subscriptions``` and
-```Paymentplan```
+### Test Cards
 
-They can be run like so:
+Use these test card numbers in Flutterwave's test environment:
 
-```sh
-phpunit
+| Card Number | CVV | Expiry | Status |
+|---|---|---|---|
+| 4242 4242 4242 4242 | 123 | 05/32 | Success |
+| 5531 8866 5490 0604 | 564 | 12/33 | Success |
+
+### Test Phone Numbers
+
+- `+234803840000001` - Success
+- `+234803840000002` - Failed OTP
+- `+234803840000003` - Timeout
+
+## Troubleshooting
+
+### Missing Environment Variables
+
+**Error:** `FLW_SECRET_KEY environment variable is not set`
+
+**Solution:** Add `FLW_SECRET_KEY` to `.env.local`
+
+### Invalid Webhook Signature
+
+**Error:** Webhook returns 401 Unauthorized
+
+**Solution:**
+1. Verify `FLW_SECRET_KEY` matches your Flutterwave account
+2. Check webhook URL is publicly accessible
+3. Ensure webhook events are enabled in Flutterwave Dashboard
+
+### Payment Verification Fails
+
+**Error:** "Payment verification failed"
+
+**Solution:**
+1. Verify transaction ID is correct
+2. Check API keys are valid
+3. Ensure Flutterwave account is active
+4. Check internet connectivity
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push code to GitHub
+2. Connect repository to Vercel
+3. Add environment variables in Vercel project settings:
+   - `NEXT_PUBLIC_FLW_PUBLIC_KEY`
+   - `FLW_SECRET_KEY`
+   - `NEXT_PUBLIC_APP_URL` (set to production domain)
+4. Deploy
+
+### Other Platforms
+
+Follow the platform's documentation for:
+- Environment variable configuration
+- Node.js version compatibility (18.17+)
+- Build command: `npm run build`
+- Start command: `npm start`
+
+## API Reference
+
+### `initiatePayment(payload)`
+
+Initiates a payment transaction with Flutterwave.
+
+**Parameters:**
+- `amount` (number): Payment amount in base currency
+- `email` (string): Customer email address
+- `phone_number` (string): Customer phone number
+- `full_name` (string): Customer full name
+- `transaction_ref` (string): Unique transaction reference
+- `currency` (string, optional): Currency code (default: 'NGN')
+- `redirect_url` (string, optional): Redirect after payment
+- `description` (string, optional): Payment description
+- `meta` (object, optional): Additional metadata
+
+**Returns:**
+```typescript
+{
+  status: 'success',
+  message: string,
+  data: {
+    link: string  // Payment page URL
+  }
+}
 ```
 
->**NOTE:** If the test fails for creating a subaccount, just change the ```account_number``` ```account_bank```  and ```businesss_email``` to something different
+### `verifyPayment(transactionId)`
 
->**NOTE:** The test may fail for account validation - ``` Pending OTP validation``` depending on whether the service is down or not
-<br>
+Verifies a payment transaction.
 
+**Parameters:**
+- `transactionId` (string): Flutterwave transaction ID
 
-<a id="debugging errors"></a>
+**Returns:**
+```typescript
+{
+  status: 'success',
+  data: {
+    id: number,
+    tx_ref: string,
+    status: 'successful' | 'failed' | 'cancelled' | 'pending',
+    amount: number,
+    currency: string,
+    customer: {
+      id: number,
+      email: string,
+      name: string
+    },
+    meta: object
+  }
+}
+```
 
-## Debugging Errors
-We understand that you may run into some errors while integrating our library. You can read more about our error messages [here](https://developer.flutterwave.com/docs/integration-guides/errors).
+### `generateTransactionRef()`
 
-For `authorization` and `validation` error responses, double-check your API keys and request. If you get a `server` error, kindly engage the team for support.
+Generates a unique transaction reference.
 
+**Returns:** `string` - Unique reference (e.g., `tx_1234567890_abc123def`)
 
-<a id="support"></a>
+### `verifyWebhookSignature(body, signature)`
 
-## Support
-For additional assistance using this library, contact the developer experience (DX) team via [email](mailto:developers@flutterwavego.com) or on [slack](https://bit.ly/34Vkzcg).
+Verifies webhook authenticity using HMAC-SHA256.
 
-You can also follow us [@FlutterwaveEng](https://twitter.com/FlutterwaveEng) and let us know what you think 😊.
+**Parameters:**
+- `body` (string): Raw webhook request body
+- `signature` (string): Signature from `verif-hash` header
 
+**Returns:** `Promise<boolean>`
 
-<a id="contribution-guidelines"></a>
+## Support & Resources
 
-## Contribution guidelines
-Read more about our community contribution guidelines [here](/CONTRIBUTING.md)
-
-
-<a id="license"></a>
+- [Flutterwave Documentation](https://developer.flutterwave.com)
+- [Flutterwave API Reference](https://developer.flutterwave.com/reference)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Server Actions Documentation](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
 
 ## License
 
-By contributing to this library, you agree that your contributions will be licensed under its [MIT license](/LICENSE).
-
-Copyright (c) Flutterwave Inc.
-
-<a id="references"></a>
-
-## Flutterwave API  References
-
-- [Flutterwave API Documentation](https://developer.flutterwave.com)
-- [Flutterwave Dashboard](https://app.flutterwave.com)  
+This project is provided as-is for reference and educational purposes.
